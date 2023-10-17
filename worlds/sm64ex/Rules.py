@@ -89,7 +89,6 @@ def set_rules(world, player: int, area_connections, star_costs):
     rf.assign_rule("BoB: Island", "CANN | CANNLESS & WC & TJ | CAPLESS & CANNLESS & LJ")
     rf.assign_rule("BoB: Mario Wings to the Sky",  "CANN & WC | CAPLESS & CANN")
     rf.assign_rule("BoB: Behind Chain Chomp's Gate", "GP | MOVELESS")
-    rf.assign_rule("BoB: 100 Coins", "CANN & WC | CANNLESS & WC & TJ")
     # Whomp's Fortress
     rf.assign_rule("WF: Tower", "{{WF: Chip Off Whomp's Block}}")
     rf.assign_rule("WF: Chip Off Whomp's Block", "GP")
@@ -172,6 +171,7 @@ def set_rules(world, player: int, area_connections, star_costs):
     rf.assign_rule("BitS: Top", "CL+TJ | CL+SF+LG | MOVELESS & TJ+WK+LG")
     # 100 Coin Stars
     if world.EnableCoinStars[player]:
+        rf.assign_rule("BoB: 100 Coins", "CANN & WC | CANNLESS & WC & TJ")
         rf.assign_rule("WF: 100 Coins", "GP | MOVELESS")
         rf.assign_rule("JRB: 100 Coins", "GP & {JRB: Upper}")
         rf.assign_rule("HMC: 100 Coins", "GP")
