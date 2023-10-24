@@ -114,7 +114,8 @@ def set_rules(world, player: int, area_connections, star_costs):
     rf.assign_rule("HMC: Navigating the Toxic Maze", "WK/SF/BF/TJ")
     rf.assign_rule("HMC: Watch for Rolling Rocks", "WK")
     # Lethal Lava Land
-    rf.assign_rule("LLL: Upper Volcano", "CL")
+    rf.assign_rule("LLL: Hot-Foot-It into the Volcano", "CL | MOVELESS & WK")
+    rf.assign_rule("LLL: Elevator Tour in the Volcano", "CL | MOVELESS & WK+LJ")
     # Shifting Sand Land
     rf.assign_rule("SSL: Upper Pyramid", "CL & TJ/BF/SF/LG | MOVELESS | WC+TJ | WC+CANN")
     rf.assign_rule("SSL: Free Flying for 8 Red Coins", "TJ+WC | WC+CANN")
@@ -132,7 +133,7 @@ def set_rules(world, player: int, area_connections, star_costs):
     rf.assign_rule("WDW: Downtown", "NAR & LG | CANN | MOVELESS & TJ+DV")
     rf.assign_rule("WDW: Go to Town for Red Coins", "WK | MOVELESS & TJ")
     rf.assign_rule("WDW: Quick Race Through Downtown!", "VC & WK/BF | VC & TJ+LG | MOVELESS & VC & TJ")
-    rf.assign_rule("WDW: Bob-omb Buddy", "TJ | SF+LG")
+    rf.assign_rule("WDW: Bob-omb Buddy", "TJ | SF+LG | NAR & BF/SF")
     # Tall, Tall Mountain
     rf.assign_rule("TTM: Top", "TJ | LJ/DV & LG/KK | MOVELESS & WK & SF/LG | MOVELESS & KK/DV")
     rf.assign_rule("TTM: Blast to the Lonely Mushroom", "CANN | CANNLESS & LJ | MOVELESS & CANNLESS")
