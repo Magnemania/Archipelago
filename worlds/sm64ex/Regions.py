@@ -34,9 +34,9 @@ def create_regions(world: MultiWorld, player: int):
     regBoB = create_region("Bob-omb Battlefield", player, world)
     create_locs(regBoB, "BoB: Big Bob-Omb on the Summit", "BoB: Footrace with Koopa The Quick",
                         "BoB: Mario Wings to the Sky", "BoB: Behind Chain Chomp's Gate", "BoB: Bob-omb Buddy")
-    bob_island = create_subregion(regBoB, "BoB: Island", "BoB: Shoot to the Island in the Sky", "BoB: Find the 8 Red Coins")
+    create_subregion(regBoB, "BoB: Island", "BoB: Shoot to the Island in the Sky", "BoB: Find the 8 Red Coins")
     if (world.EnableCoinStars[player].value):
-        create_locs(bob_island, "BoB: 100 Coins")
+        create_locs(regBoB, "BoB: 100 Coins")
 
     regWhomp = create_region("Whomp's Fortress", player, world)
     create_locs(regWhomp, "WF: Chip Off Whomp's Block", "WF: Shoot into the Wild Blue", "WF: Red Coins on the Floating Isle",
@@ -95,10 +95,10 @@ def create_regions(world: MultiWorld, player: int):
         create_locs(regLLL, "LLL: 100 Coins")
 
     regSSL = create_region("Shifting Sand Land", player, world)
-    create_locs(regSSL, "SSL: In the Talons of the Big Bird", "SSL: Shining Atop the Pyramid", "SSL: Stand Tall on the Four Pillars",
+    create_locs(regSSL, "SSL: In the Talons of the Big Bird", "SSL: Shining Atop the Pyramid", "SSL: Inside the Ancient Pyramid",
                         "SSL: Free Flying for 8 Red Coins", "SSL: Bob-omb Buddy",
                         "SSL: 1Up Block Outside Pyramid", "SSL: 1Up Block Pyramid Left Path", "SSL: 1Up Block Pyramid Back")
-    create_subregion(regSSL, "SSL: Upper Pyramid", "SSL: Inside the Ancient Pyramid", "SSL: Pyramid Puzzle")
+    create_subregion(regSSL, "SSL: Upper Pyramid", "SSL: Stand Tall on the Four Pillars", "SSL: Pyramid Puzzle")
     if (world.EnableCoinStars[player].value):
         create_locs(regSSL, "SSL: 100 Coins")
 
@@ -155,17 +155,16 @@ def create_regions(world: MultiWorld, player: int):
 
     regTTC = create_region("Tick Tock Clock", player, world)
     create_locs(regTTC, "TTC: Stop Time for Red Coins")
-    ttc_lower = create_subregion(regTTC, "TTC: Lower", "TTC: Roll into the Cage", "TTC: The Pit and the Pendulums",
-                                           "TTC: Get a Hand", "TTC: 1Up Block Midway Up")
-    ttc_upper = create_subregion(ttc_lower, "TTC: Upper", "TTC: Timed Jumps on Moving Bars")
+    ttc_lower = create_subregion(regTTC, "TTC: Lower", "TTC: Roll into the Cage", "TTC: Get a Hand", "TTC: 1Up Block Midway Up")
+    ttc_upper = create_subregion(ttc_lower, "TTC: Upper", "TTC: Timed Jumps on Moving Bars", "TTC: The Pit and the Pendulums")
     ttc_top = create_subregion(ttc_upper, "TTC: Top", "TTC: Stomp on the Thwomp", "TTC: 1Up Block at the Top")
     if (world.EnableCoinStars[player].value):
         create_locs(ttc_top, "TTC: 100 Coins")
 
     regRR = create_region("Rainbow Ride", player, world)
     create_locs(regRR, "RR: Swingin' in the Breeze", "RR: Tricky Triangles!",
-                       "RR: 1Up Block Top of Red Coin Maze", "RR: 1Up Block Under Fly Guy")
-    rr_maze = create_subregion(regRR, "RR: Maze", "RR: Coins Amassed in a Maze", "RR: Bob-omb Buddy")
+                       "RR: 1Up Block Top of Red Coin Maze", "RR: 1Up Block Under Fly Guy", "RR: Bob-omb Buddy")
+    rr_maze = create_subregion(regRR, "RR: Maze", "RR: Coins Amassed in a Maze")
     create_subregion(regRR, "RR: Cruiser", "RR: Cruiser Crossing the Rainbow", "RR: Somewhere Over the Rainbow")
     create_subregion(regRR, "RR: House", "RR: The Big House in the Sky", "RR: 1Up Block On House in the Sky")
     if (world.EnableCoinStars[player].value):
