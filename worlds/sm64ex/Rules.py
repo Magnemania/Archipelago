@@ -118,7 +118,7 @@ def set_rules(world, player: int, area_connections, star_costs):
     rf.assign_rule("LLL: Elevator Tour in the Volcano", "CL | MOVELESS & WK+LJ")
     # Shifting Sand Land
     rf.assign_rule("SSL: Upper Pyramid", "CL & TJ/BF/SF/LG | MOVELESS | WC+TJ | WC+CANN")
-    rf.assign_rule("SSL: Free Flying for 8 Red Coins", "TJ+WC | WC+CANN")
+    rf.assign_rule("SSL: Free Flying for 8 Red Coins", "TJ+WC | WC+CANN | TJ/SF/BF & CAPLESS | MOVELESS")
     rf.assign_rule("SSL: Inside the Ancient Pyramid", "MOVELESS | WC+TJ | WC+CANN")
     # Dire, Dire Docks
     rf.assign_rule("DDD: Moving Poles", "CL & {{Bowser in the Fire Sea Key}} | TJ+DV+LG+WK & MOVELESS")
@@ -127,10 +127,10 @@ def set_rules(world, player: int, area_connections, star_costs):
     # Snowman's Land
     rf.assign_rule("SL: Snowman's Big Head", "BF/SF/CANN/TJ")
     rf.assign_rule("SL: In the Deep Freeze", "WK/SF/LG/BF/CANN/TJ")
-    rf.assign_rule("SL: Into the Igloo", "VC")
+    rf.assign_rule("SL: Into the Igloo", "VC & TJ/SF/BF/WK/LG | MOVELESS & VC")
     # Wet-Dry World
     rf.assign_rule("WDW: Top", "WK/TJ/SF/BF | MOVELESS")
-    rf.assign_rule("WDW: Downtown", "NAR & LG | CANN | MOVELESS & TJ+DV")
+    rf.assign_rule("WDW: Downtown", "NAR & LG & TJ/SF/BF | CANN | MOVELESS & TJ+DV")
     rf.assign_rule("WDW: Go to Town for Red Coins", "WK | MOVELESS & TJ")
     rf.assign_rule("WDW: Quick Race Through Downtown!", "VC & WK/BF | VC & TJ+LG | MOVELESS & VC & TJ")
     rf.assign_rule("WDW: Bob-omb Buddy", "TJ | SF+LG | NAR & BF/SF")
@@ -139,7 +139,7 @@ def set_rules(world, player: int, area_connections, star_costs):
     rf.assign_rule("TTM: Blast to the Lonely Mushroom", "CANN | CANNLESS & LJ | MOVELESS & CANNLESS")
     # Tiny-Huge Island
     rf.assign_rule("THI: Pipes", "NAR | LJ/TJ/DV/LG | MOVELESS & BF/SF/KK")
-    rf.assign_rule("THI: Large Top", "NAR | LJ/TJ/DV")
+    rf.assign_rule("THI: Large Top", "NAR | LJ/TJ/DV | MOVELESS")
     rf.assign_rule("THI: Wiggler's Red Coins", "WK")
     rf.assign_rule("THI: Make Wiggler Squirm", "GP | MOVELESS & DV")
     # Tick Tock Clock
