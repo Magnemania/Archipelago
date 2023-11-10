@@ -190,11 +190,11 @@ def set_rules(world, player: int, area_connections, star_costs):
 
     if star_costs["MIPS1Cost"] > star_costs["MIPS2Cost"]:
         (star_costs["MIPS2Cost"], star_costs["MIPS1Cost"]) = (star_costs["MIPS1Cost"], star_costs["MIPS2Cost"])
-    add_rule(world.get_location("MIPS 1", player), lambda state: state.can_reach("Basement", 'Region', player) and state.has("Power Star", player, star_costs["MIPS1Cost"]))
-    add_rule(world.get_location("MIPS 2", player), lambda state: state.can_reach("Basement", 'Region', player) and state.has("Power Star", player, star_costs["MIPS2Cost"]))
     rf.assign_rule("MIPS 1", "DV | MOVELESS")
     rf.assign_rule("MIPS 2", "DV | MOVELESS")
-
+    add_rule(world.get_location("MIPS 1", player), lambda state: state.can_reach("Basement", 'Region', player) and state.has("Power Star", player, star_costs["MIPS1Cost"]))
+    add_rule(world.get_location("MIPS 2", player), lambda state: state.can_reach("Basement", 'Region', player) and state.has("Power Star", player, star_costs["MIPS2Cost"]))
+    
     world.completion_condition[player] = lambda state: state.can_reach("BitS: Top", 'Region', player)
 
 
