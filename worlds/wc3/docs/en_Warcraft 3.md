@@ -6,10 +6,11 @@ The following unlocks are randomized as items:
 1. The available missions.
 2. Your ability to build any non-worker unit.
 3. Your ability to research unit upgrades.
-4. Your ability to get the generic unit upgrades, such as attack and armour upgrades.
-5. Your ability to unlock hero abilities
-6. Starting items in each mission
-7. Small boosts to your starting gold and lumber in each mission.
+4. Race-specific worker abilities
+5. Your ability to research weapon and armor upgrades
+6. Hero abilities
+7. Starting items in each mission
+8. Small boosts to your starting gold and lumber in each mission
 
 You receive a small cache of random items upon starting the game.  You may unlock additional items by:
 * Completing missions (three items awarded per mission victory)

@@ -19,6 +19,7 @@ class MissionPools(IntEnum):
     VERY_HARD = 4
     FINAL = 5
 
+
 class MissionFlags(IntFlag):
     none = 0
     Human = auto()

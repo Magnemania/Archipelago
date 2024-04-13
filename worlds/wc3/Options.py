@@ -124,28 +124,19 @@ class GenericUpgradeMissions(Range):
     default = 0
 
 
-class GenericUpgradeItems(Choice):
-    """Determines how weapon and armor upgrades are split into items.  All options produce 3 levels of each item.
-    Does nothing if upgrades are unlocked by completed mission counts.
-
-    Individual Items:  All weapon and armor upgrades are each an item,
-    resulting in 18 total upgrade items for Terran and 15 total items for Zerg and Protoss each.
-    Bundle Weapon And Armor:  All types of weapon upgrades are one item per race,
-    and all types of armor upgrades are one item per race,
-    resulting in 18 total items.
-    Bundle Unit Class:  Weapon and armor upgrades are merged,
-    but upgrades are bundled separately for each race:
-    Infantry, Vehicle, and Starship upgrades for Terran (9 items),
-    Ground and Flyer upgrades for Zerg (6 items),
-    Ground and Air upgrades for Protoss (6 items),
-    resulting in 21 total items.
-    Bundle All:  All weapon and armor upgrades are one item per race,
-    resulting in 9 total items."""
-    display_name = "Generic Upgrade Items"
-    option_individual_items = 0
-    option_bundle_weapon_and_armor = 1
-    option_bundle_unit_class = 2
-    option_bundle_all = 3
+class CasterUpgradeItems(Choice):
+    """Determines how caster Adept and Master Training upgrades are split into items.
+    Upgrades: Caster upgrades are unlocked at Level 2 Weapons and Armor and Level 3 weapons and armor.
+    By Unit: Two Progressive Caster Training items are shuffled into the pool for each caster.
+    By Race: Two Progressive Caster Training items are shuffled into the pool for each race.
+    Progressive Casters: Two additional copies of each caster unit are shuffled into the pool.
+    Each item after the first unlocks a tier of Training for that unit.
+    """
+    display_name = "Caster Upgrade Items"
+    option_upgrades = 0
+    option_by_unit = 1
+    option_by_race = 2
+    option_progressive_casters = 3
 
 
 class EnsureGenericItems(Range):
@@ -208,7 +199,7 @@ class Warcraft3Options(PerGameCommonOptions):
     required_tactics: RequiredTactics
     ensure_generic_items: EnsureGenericItems
     generic_upgrade_missions: GenericUpgradeMissions
-    generic_upgrade_items: GenericUpgradeItems
+    caster_upgrade_items: CasterUpgradeItems
     locked_items: LockedItems
     excluded_items: ExcludedItems
     excluded_missions: ExcludedMissions

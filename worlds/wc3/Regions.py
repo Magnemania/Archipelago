@@ -35,6 +35,7 @@ def create_regions(
     else:
         return create_structured_regions(world, locations, location_cache, mission_order_type)
 
+
 def create_vanilla_regions(
     world: World,
     locations: Tuple[LocationData, ...],
