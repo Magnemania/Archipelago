@@ -3,10 +3,9 @@ import math
 
 from BaseClasses import MultiWorld, Region, Entrance, Location, CollectionState
 from .Locations import LocationData
-from .Options import get_option_value, MissionOrder, get_enabled_campaigns, campaign_depending_orders, \
-    GridTwoStartPositions
-from .MissionTables import MissionInfo, mission_orders, vanilla_mission_req_table, \
-    MissionPools, WC3Campaign, get_goal_location, WC3Mission, MissionConnection
+from .Options import get_option_value, MissionOrder, get_enabled_campaigns, GridTwoStartPositions
+from .MissionTables import MissionInfo, mission_orders, get_vanilla_mission_req_table, \
+    MissionPools, WC3Campaign, WC3Mission, MissionConnection
 from .PoolFilter import filter_missions
 from worlds.AutoWorld import World
 
@@ -45,227 +44,24 @@ def create_vanilla_regions(
     regions = [create_region(world, locations_per_region, location_cache, "Menu")]
 
     mission_pools: Dict[MissionPools, List[WC3Mission]] = filter_missions(world)
-    final_mission = mission_pools[MissionPools.FINAL][0]
-
     enabled_campaigns = get_enabled_campaigns(world)
+    campaigns = {campaign: dict() for campaign in WC3Campaign}
+    mission_req = []
+    for mission in WC3Mission:
+        campaign = campaigns[mission.campaign]
+        campaign[mission.mission_name] = MissionInfo(mission, mission_req, "_" + str(len(campaign) + 1), completion_critical=True)
+    final_mission = mission_pools[MissionPools.FINAL][0]
     names: Dict[str, int] = {}
 
     # Generating all regions and locations for each enabled campaign
+    vanilla_mission_req_table = get_vanilla_mission_req_table()
     for campaign in enabled_campaigns:
-        for region_name in vanilla_mission_req_table[campaign].keys():
+        for region_name in [campaign].keys():
             regions.append(create_region(world, locations_per_region, location_cache, region_name))
     world.multiworld.regions += regions
     vanilla_mission_reqs = {campaign: missions for campaign, missions in vanilla_mission_req_table.items() if campaign in enabled_campaigns}
 
-    def wol_cleared_missions(state: CollectionState, mission_count: int) -> bool:
-        return state.has_group("WoL Missions", world.player, mission_count)
-    
     player: int = world.player
-    if WC3Campaign.WOL in enabled_campaigns:
-        connect(world, names, 'Menu', 'Liberation Day')
-        connect(world, names, 'Liberation Day', 'The Outlaws',
-                lambda state: state.has("Beat Liberation Day", player))
-        connect(world, names, 'The Outlaws', 'Zero Hour',
-                lambda state: state.has("Beat The Outlaws", player))
-        connect(world, names, 'Zero Hour', 'Evacuation',
-                lambda state: state.has("Beat Zero Hour", player))
-        connect(world, names, 'Evacuation', 'Outbreak',
-                lambda state: state.has("Beat Evacuation", player))
-        connect(world, names, "Outbreak", "Safe Haven",
-                lambda state: wol_cleared_missions(state, 7) and state.has("Beat Outbreak", player))
-        connect(world, names, "Outbreak", "Haven's Fall",
-                lambda state: wol_cleared_missions(state, 7) and state.has("Beat Outbreak", player))
-        connect(world, names, 'Zero Hour', 'Smash and Grab',
-                lambda state: state.has("Beat Zero Hour", player))
-        connect(world, names, 'Smash and Grab', 'The Dig',
-                lambda state: wol_cleared_missions(state, 8) and state.has("Beat Smash and Grab", player))
-        connect(world, names, 'The Dig', 'The Moebius Factor',
-                lambda state: wol_cleared_missions(state, 11) and state.has("Beat The Dig", player))
-        connect(world, names, 'The Moebius Factor', 'Supernova',
-                lambda state: wol_cleared_missions(state, 14) and state.has("Beat The Moebius Factor", player))
-        connect(world, names, 'Supernova', 'Maw of the Void',
-                lambda state: state.has("Beat Supernova", player))
-        connect(world, names, 'Zero Hour', "Devil's Playground",
-                lambda state: wol_cleared_missions(state, 4) and state.has("Beat Zero Hour", player))
-        connect(world, names, "Devil's Playground", 'Welcome to the Jungle',
-                lambda state: state.has("Beat Devil's Playground", player))
-        connect(world, names, "Welcome to the Jungle", 'Breakout',
-                lambda state: wol_cleared_missions(state, 8) and state.has("Beat Welcome to the Jungle", player))
-        connect(world, names, "Welcome to the Jungle", 'Ghost of a Chance',
-                lambda state: wol_cleared_missions(state, 8) and state.has("Beat Welcome to the Jungle", player))
-        connect(world, names, "Zero Hour", 'The Great Train Robbery',
-                lambda state: wol_cleared_missions(state, 6) and state.has("Beat Zero Hour", player))
-        connect(world, names, 'The Great Train Robbery', 'Cutthroat',
-                lambda state: state.has("Beat The Great Train Robbery", player))
-        connect(world, names, 'Cutthroat', 'Engine of Destruction',
-                lambda state: state.has("Beat Cutthroat", player))
-        connect(world, names, 'Engine of Destruction', 'Media Blitz',
-                lambda state: state.has("Beat Engine of Destruction", player))
-        connect(world, names, 'Media Blitz', 'Piercing the Shroud',
-                lambda state: state.has("Beat Media Blitz", player))
-        connect(world, names, 'Maw of the Void', 'Gates of Hell',
-                lambda state: state.has("Beat Maw of the Void", player))
-        connect(world, names, 'Gates of Hell', 'Belly of the Beast',
-                lambda state: state.has("Beat Gates of Hell", player))
-        connect(world, names, 'Gates of Hell', 'Shatter the Sky',
-                lambda state: state.has("Beat Gates of Hell", player))
-        connect(world, names, 'Gates of Hell', 'All-In',
-                lambda state: state.has('Beat Gates of Hell', player) and (
-                        state.has('Beat Shatter the Sky', player) or state.has('Beat Belly of the Beast', player)))
-
-    if WC3Campaign.PROPHECY in enabled_campaigns:
-        if WC3Campaign.WOL in enabled_campaigns:
-            connect(world, names, 'The Dig', 'Whispers of Doom',
-                    lambda state: state.has("Beat The Dig", player)),
-        else:
-            vanilla_mission_reqs[WC3Campaign.PROPHECY] = vanilla_mission_reqs[WC3Campaign.PROPHECY].copy()
-            vanilla_mission_reqs[WC3Campaign.PROPHECY][WC3Mission.WHISPERS_OF_DOOM.mission_name] = MissionInfo(
-                WC3Mission.WHISPERS_OF_DOOM, [], WC3Mission.WHISPERS_OF_DOOM.area)
-            connect(world, names, 'Menu', 'Whispers of Doom'),
-        connect(world, names, 'Whispers of Doom', 'A Sinister Turn',
-                lambda state: state.has("Beat Whispers of Doom", player))
-        connect(world, names, 'A Sinister Turn', 'Echoes of the Future',
-                lambda state: state.has("Beat A Sinister Turn", player))
-        connect(world, names, 'Echoes of the Future', 'In Utter Darkness',
-                lambda state: state.has("Beat Echoes of the Future", player))
-
-    if WC3Campaign.HOTS in enabled_campaigns:
-        connect(world, names, 'Menu', 'Lab Rat'),
-        connect(world, names, 'Lab Rat', 'Back in the Saddle',
-                lambda state: state.has("Beat Lab Rat", player)),
-        connect(world, names, 'Back in the Saddle', 'Rendezvous',
-                lambda state: state.has("Beat Back in the Saddle", player)),
-        connect(world, names, 'Rendezvous', 'Harvest of Screams',
-                lambda state: state.has("Beat Rendezvous", player)),
-        connect(world, names, 'Harvest of Screams', 'Shoot the Messenger',
-                lambda state: state.has("Beat Harvest of Screams", player)),
-        connect(world, names, 'Shoot the Messenger', 'Enemy Within',
-                lambda state: state.has("Beat Shoot the Messenger", player)),
-        connect(world, names, 'Rendezvous', 'Domination',
-                lambda state: state.has("Beat Rendezvous", player)),
-        connect(world, names, 'Domination', 'Fire in the Sky',
-                lambda state: state.has("Beat Domination", player)),
-        connect(world, names, 'Fire in the Sky', 'Old Soldiers',
-                lambda state: state.has("Beat Fire in the Sky", player)),
-        connect(world, names, 'Old Soldiers', 'Waking the Ancient',
-                lambda state: state.has("Beat Old Soldiers", player)),
-        connect(world, names, 'Enemy Within', 'Waking the Ancient',
-                lambda state: state.has("Beat Enemy Within", player)),
-        connect(world, names, 'Waking the Ancient', 'The Crucible',
-                lambda state: state.has("Beat Waking the Ancient", player)),
-        connect(world, names, 'The Crucible', 'Supreme',
-                lambda state: state.has("Beat The Crucible", player)),
-        connect(world, names, 'Supreme', 'Infested',
-                lambda state: state.has("Beat Supreme", player) and
-                            state.has("Beat Old Soldiers", player) and
-                            state.has("Beat Enemy Within", player)),
-        connect(world, names, 'Infested', 'Hand of Darkness',
-                lambda state: state.has("Beat Infested", player)),
-        connect(world, names, 'Hand of Darkness', 'Phantoms of the Void',
-                lambda state: state.has("Beat Hand of Darkness", player)),
-        connect(world, names, 'Supreme', 'With Friends Like These',
-                lambda state: state.has("Beat Supreme", player) and
-                            state.has("Beat Old Soldiers", player) and
-                            state.has("Beat Enemy Within", player)),
-        connect(world, names, 'With Friends Like These', 'Conviction',
-                lambda state: state.has("Beat With Friends Like These", player)),
-        connect(world, names, 'Conviction', 'Planetfall',
-                lambda state: state.has("Beat Conviction", player) and
-                            state.has("Beat Phantoms of the Void", player)),
-        connect(world, names, 'Planetfall', 'Death From Above',
-                lambda state: state.has("Beat Planetfall", player)),
-        connect(world, names, 'Death From Above', 'The Reckoning',
-                lambda state: state.has("Beat Death From Above", player)),
-
-    if WC3Campaign.PROLOGUE in enabled_campaigns:
-        connect(world, names, "Menu", "Dark Whispers")
-        connect(world, names, "Dark Whispers", "Ghosts in the Fog",
-                lambda state: state.has("Beat Dark Whispers", player))
-        connect(world, names, "Dark Whispers", "Evil Awoken",
-                lambda state: state.has("Beat Ghosts in the Fog", player))
-
-    if WC3Campaign.LOTV in enabled_campaigns:
-        connect(world, names, "Menu", "For Aiur!")
-        connect(world, names, "For Aiur!", "The Growing Shadow",
-                lambda state: state.has("Beat For Aiur!", player)),
-        connect(world, names, "The Growing Shadow", "The Spear of Adun",
-                lambda state: state.has("Beat The Growing Shadow", player)),
-        connect(world, names, "The Spear of Adun", "Sky Shield",
-                lambda state: state.has("Beat The Spear of Adun", player)),
-        connect(world, names, "Sky Shield", "Brothers in Arms",
-                lambda state: state.has("Beat Sky Shield", player)),
-        connect(world, names, "Brothers in Arms", "Forbidden Weapon",
-                lambda state: state.has("Beat Brothers in Arms", player)),
-        connect(world, names, "The Spear of Adun", "Amon's Reach",
-                lambda state: state.has("Beat The Spear of Adun", player)),
-        connect(world, names, "Amon's Reach", "Last Stand",
-                lambda state: state.has("Beat Amon's Reach", player)),
-        connect(world, names, "Last Stand", "Forbidden Weapon",
-                lambda state: state.has("Beat Last Stand", player)),
-        connect(world, names, "Forbidden Weapon", "Temple of Unification",
-                lambda state: state.has("Beat Brothers in Arms", player)
-                              and state.has("Beat Last Stand", player)
-                              and state.has("Beat Forbidden Weapon", player)),
-        connect(world, names, "Temple of Unification", "The Infinite Cycle",
-                lambda state: state.has("Beat Temple of Unification", player)),
-        connect(world, names, "The Infinite Cycle", "Harbinger of Oblivion",
-                lambda state: state.has("Beat The Infinite Cycle", player)),
-        connect(world, names, "Harbinger of Oblivion", "Unsealing the Past",
-                lambda state: state.has("Beat Harbinger of Oblivion", player)),
-        connect(world, names, "Unsealing the Past", "Purification",
-                lambda state: state.has("Beat Unsealing the Past", player)),
-        connect(world, names, "Purification", "Templar's Charge",
-                lambda state: state.has("Beat Purification", player)),
-        connect(world, names, "Harbinger of Oblivion", "Steps of the Rite",
-                lambda state: state.has("Beat Harbinger of Oblivion", player)),
-        connect(world, names, "Steps of the Rite", "Rak'Shir",
-                lambda state: state.has("Beat Steps of the Rite", player)),
-        connect(world, names, "Rak'Shir", "Templar's Charge",
-                lambda state: state.has("Beat Rak'Shir", player)),
-        connect(world, names, "Templar's Charge", "Templar's Return",
-                lambda state: state.has("Beat Purification", player)
-                              and state.has("Beat Rak'Shir", player)
-                              and state.has("Beat Templar's Charge", player)),
-        connect(world, names, "Templar's Return", "The Host",
-                lambda state: state.has("Beat Templar's Return", player)),
-        connect(world, names, "The Host", "Salvation",
-                lambda state: state.has("Beat The Host", player)),
-
-    if WC3Campaign.EPILOGUE in enabled_campaigns:
-        # TODO: Make this aware about excluded campaigns
-        connect(world, names, "Salvation", "Into the Void",
-                lambda state: state.has("Beat Salvation", player)
-                              and state.has("Beat The Reckoning", player)
-                              and state.has("Beat All-In", player)),
-        connect(world, names, "Into the Void", "The Essence of Eternity",
-                lambda state: state.has("Beat Into the Void", player)),
-        connect(world, names, "The Essence of Eternity", "Amon's Fall",
-                lambda state: state.has("Beat The Essence of Eternity", player)),
-
-    if WC3Campaign.NCO in enabled_campaigns:
-        connect(world, names, "Menu", "The Escape")
-        connect(world, names, "The Escape", "Sudden Strike",
-                lambda state: state.has("Beat The Escape", player))
-        connect(world, names, "Sudden Strike", "Enemy Intelligence",
-                lambda state: state.has("Beat Sudden Strike", player))
-        connect(world, names, "Enemy Intelligence", "Trouble In Paradise",
-                lambda state: state.has("Beat Enemy Intelligence", player))
-        connect(world, names, "Trouble In Paradise", "Night Terrors",
-                lambda state: state.has("Beat Evacuation", player))
-        connect(world, names, "Night Terrors", "Flashpoint",
-                lambda state: state.has("Beat Night Terrors", player))
-        connect(world, names, "Flashpoint", "In the Enemy's Shadow",
-                lambda state: state.has("Beat Flashpoint", player))
-        connect(world, names, "In the Enemy's Shadow", "Dark Skies",
-                lambda state: state.has("Beat In the Enemy's Shadow", player))
-        connect(world, names, "Dark Skies", "End Game",
-                lambda state: state.has("Beat Dark Skies", player))
-
-    goal_location = get_goal_location(final_mission)
-    assert goal_location, f"Unable to find a goal location for mission {final_mission}"
-    setup_final_location(goal_location, location_cache)
-
-    return (vanilla_mission_reqs, final_mission.id, goal_location)
 
 
 def create_grid_regions(
@@ -362,7 +158,7 @@ def create_grid_regions(
 
     final_mission_id = final_mission.id
     # Changing the completion condition for alternate final missions into an event
-    final_location = get_goal_location(final_mission)
+    final_location = final_mission.mission_name + ': Victory'
     setup_final_location(final_location, location_cache)
 
     return {WC3Campaign.GLOBAL: mission_req_table}, final_mission_id, final_location
@@ -386,7 +182,6 @@ def create_structured_regions(
 
     mission_order = mission_orders[mission_order_type]()
     enabled_campaigns = get_enabled_campaigns(world)
-    shuffle_campaigns = get_option_value(world, "shuffle_campaigns")
 
     mission_pools: Dict[MissionPools, List[WC3Mission]] = filter_missions(world)
     final_mission = mission_pools[MissionPools.FINAL][0]
@@ -398,7 +193,7 @@ def create_structured_regions(
     mission_slots: List[WC3MissionSlot] = []
     mission_pool = [mission for mission_pool in mission_pools.values() for mission in mission_pool]
 
-    if mission_order_type in campaign_depending_orders:
+    if mission_order_type in {}:
         # Do slot removal per campaign
         for campaign in enabled_campaigns:
             campaign_mission_pool = [mission for mission in mission_pool if mission.campaign == campaign]
@@ -462,7 +257,7 @@ def create_structured_regions(
                 very_hard_slots.append(i)
 
     def pick_mission(slot):
-        if shuffle_campaigns or mission_order_type not in campaign_depending_orders:
+        if True:
             # Pick a mission from any campaign
             filler = world.random.randint(0, len(missions_to_add) - 1)
             mission = missions_to_add.pop(filler)
@@ -518,7 +313,7 @@ def create_structured_regions(
     world.multiworld.regions += regions
 
     campaigns: List[WC3Campaign]
-    if mission_order_type in campaign_depending_orders:
+    if mission_order_type in {}:
         campaigns = list(enabled_campaigns)
     else:
         campaigns = [WC3Campaign.GLOBAL]
@@ -597,7 +392,7 @@ def create_structured_regions(
 
     final_mission_id = final_mission.id
     # Changing the completion condition for alternate final missions into an event
-    final_location = get_goal_location(final_mission)
+    final_location = final_mission.mission_name + ': Victory'
     setup_final_location(final_location, location_cache)
 
     return mission_req_table, final_mission_id, final_location

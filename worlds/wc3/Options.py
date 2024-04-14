@@ -38,14 +38,9 @@ class MissionOrder(Choice):
     display_name = "Mission Order"
     option_vanilla = 0
     option_vanilla_shuffled = 1
-    option_mini_campaign = 2
-    option_medium_grid = 3
-    option_mini_grid = 4
-    option_blitz = 5
-    option_gauntlet = 6
-    option_mini_gauntlet = 7
-    option_tiny_grid = 8
-    option_grid = 9
+    option_blitz = 2
+    option_gauntlet = 3
+    option_grid = 4
 
 
 class MaximumCampaignSize(Range):
@@ -92,9 +87,9 @@ class StarterCache(Range):
     this option will be forced higher.
     """
     display_name = "Starter Cache"
-    range_start = 0
+    range_start = 1
     range_end = 10
-    default = 0
+    default = 1
 
 
 class RequiredTactics(Choice):
@@ -126,7 +121,7 @@ class GenericUpgradeMissions(Range):
 
 class CasterUpgradeItems(Choice):
     """Determines how caster Adept and Master Training upgrades are split into items.
-    Upgrades: Caster upgrades are unlocked at Level 2 Weapons and Armor and Level 3 weapons and armor.
+    Upgrades: Adept Training is unlocked at Level 2 Weapons and Armor and Master Training at Level 3 weapons and armor.
     By Unit: Two Progressive Caster Training items are shuffled into the pool for each caster.
     By Race: Two Progressive Caster Training items are shuffled into the pool for each race.
     Progressive Casters: Two additional copies of each caster unit are shuffled into the pool.
@@ -137,20 +132,18 @@ class CasterUpgradeItems(Choice):
     option_by_unit = 1
     option_by_race = 2
     option_progressive_casters = 3
+    default = 1
 
 
-class EnsureGenericItems(Range):
-    """
-    Specifies a minimum percentage of the generic item pool that will be present for the slot.
-    The generic item pool is the pool of all generically useful items after all exclusions.
-    Generically-useful items include: Worker upgrades, Building upgrades, economy upgrades,
-    Mercenaries, Kerrigan levels and abilities, and Spear of Adun abilities
-    Increasing this percentage will make units less common.
-    """
-    display_name = "Ensure Generic Items"
-    range_start = 0
-    range_end = 100
-    default = 25
+class HeroLevels(Choice):
+    """Determines how heroes gain levels.  All heroes of the same race will share their level.
+    Vanilla: Heroes start each mission at their normal starting level in vanilla.
+    Racial: 10 levels are shuffled into the pool for each race.
+    Global: 10 levels are shuffled into the pool for all races."""
+    display_name = "Hero Levels"
+    option_vanilla = 0
+    option_racial = 1
+    option_global = 2
 
 
 class LockedItems(ItemSet):
@@ -176,13 +169,14 @@ class ChecksPerVictory(Range):
     display_name = "Checks Per Victory"
     range_start = 1
     range_end = 10
+    default = 3
 
 
 class ResourcesPerItem(Range):
     """
     Configures how many minerals are given per resource item.
     """
-    display_name = "Minerals Per Item"
+    display_name = "Resources Per Item"
     range_start = 0
     range_end = 500
     default = 25
@@ -194,10 +188,10 @@ class Warcraft3Options(PerGameCommonOptions):
     mission_order: MissionOrder
     maximum_campaign_size: MaximumCampaignSize
     grid_two_start_positions: GridTwoStartPositions
+    enabled_campaigns: EnabledCampaigns
     shuffle_no_build: ShuffleNoBuild
     starter_cache: StarterCache
     required_tactics: RequiredTactics
-    ensure_generic_items: EnsureGenericItems
     generic_upgrade_missions: GenericUpgradeMissions
     caster_upgrade_items: CasterUpgradeItems
     locked_items: LockedItems
@@ -218,13 +212,19 @@ def get_option_value(world: World, name: str) -> Union[int,  FrozenSet]:
 
 
 def get_enabled_campaigns(world: World) -> Set[WC3Campaign]:
-    enabled_campaigns = get_option_value(world, "enabled_campaigns")
-    return {campaign for campaign in WC3Campaign if campaign.campaign_name in enabled_campaigns}
+    if world:
+        enabled_campaigns = world.options.enabled_campaigns
+        return {campaign for campaign in WC3Campaign if campaign.campaign_name in enabled_campaigns}
+    else:
+        return {campaign for campaign in WC3Campaign}
 
 
 def get_disabled_campaigns(world: World) -> Set[WC3Campaign]:
-    enabled_campaigns = get_option_value(world, "enabled_campaigns")
-    return {campaign for campaign in WC3Campaign if campaign.campaign_name not in enabled_campaigns}
+    if world:
+        enabled_campaigns = world.options.enabled_campaigns
+        return {campaign for campaign in WC3Campaign if campaign.campaign_name not in enabled_campaigns}
+    else:
+        return {}
 
 
 def get_excluded_missions(world: World) -> Set[WC3Mission]:
