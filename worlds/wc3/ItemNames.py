@@ -277,10 +277,10 @@ COUATL = "Couatl"
 
 # Naga Buildings
 TIDAL_GUARDIAN = "Tidal Guardian"
-COUATL_ABOLISH_MAGIC = "Abolish Magic (Couatl)"
 
 # Naga Upgrades
 NAGA_UPGRADES = "Progressive Weapons and Armor (Naga)"
+COUATL_ABOLISH_MAGIC = "Abolish Magic (Couatl)"
 MYRMIDON_ENSNARE = "Ensnare (Naga Myrmidon)"
 PROGRESSIVE_SIREN_TRAINING = "Progressive Training (Siren)"
 
