@@ -416,4 +416,4 @@ class WC3CampaignGoal(NamedTuple):
 
 
 def get_no_build_missions() -> List[WC3Mission]:
-    return [mission for mission in WC3Mission if mission.flags & MissionFlags.NoBuild]
+    return [mission for mission in WC3Mission if MissionFlags.NoBuild in mission.flags]

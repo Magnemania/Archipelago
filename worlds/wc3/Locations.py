@@ -33,8 +33,9 @@ required_ability_difficulty = {
     MissionPools.VERY_HARD: 5
 }
 
+
 class WC3Location(Location):
-    game: str = "Starcraft2"
+    game: str = "Warcraft 3"
 
 
 class LocationType(IntEnum):

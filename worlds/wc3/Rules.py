@@ -39,7 +39,7 @@ class WC3Logic:
                or state.has_all({ItemNames.SIEGE_ENGINE, ItemNames.SIEGE_ENGINE_BARRAGE}, self.player)
 
     def orc_anti_air(self, state):
-        return state.has_any({ItemNames.HEADHUNTER, ItemNames.WIND_RIDER, ItemNames.BATRIDER}) \
+        return state.has_any({ItemNames.HEADHUNTER, ItemNames.WIND_RIDER, ItemNames.BATRIDER}, self.player) \
                or state.has_all({ItemNames.RAIDER, ItemNames.RAIDER_ENSNARE}, self.player)
 
     def undead_anti_air(self, state):
