@@ -139,8 +139,8 @@ def set_rules(world, options: SM64Options, player: int, area_connections: dict, 
     rf.assign_rule("BBH: Eye to Eye in the Secret Room", "VC")
     # Haze Maze Cave
     rf.assign_rule("HMC: Red Coin Area", "CL & WK/LG/BF/SF/TJ | MOVELESS & WK")
-    rf.assign_rule("HMC: A-Maze-Ing Emergency Exit", "TJ+CL | MOVELESS & WK & TJ/LJ | MOVELESS & WK+SF+LG | MOVELESS & TJ+DV | MOVELESS & WK/SF/BF & CL")
-    rf.assign_rule("HMC: 1Up Block above Pit", "TJ+CL | MOVELESS & WK & TJ/SF/LJ | MOVELESS & WK/SF/BF & CL")
+    rf.assign_rule("HMC: A-Maze-Ing Emergency Exit", "TJ+CL | MOVELESS & WK & TJ | MOVELESS & TJ+DV | MOVELESS & WK/SF/BF/TJ & CL/LJ")
+    rf.assign_rule("HMC: 1Up Block above Pit", "TJ+CL | MOVELESS & WK TJ/SF/LG | MOVELESS & WK/SF/BF/TJ & CL/LJ")
     rf.assign_rule("HMC: Metal-Head Mario Can Move!", "LJ+MC | CAPLESS & LJ+TJ | CAPLESS & MOVELESS & LJ/TJ/WK/DV")
     rf.assign_rule("HMC: Navigating the Toxic Maze", "WK/SF/BF/TJ")
     rf.assign_rule("HMC: Watch for Rolling Rocks", "WK")
