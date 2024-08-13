@@ -221,8 +221,8 @@ def create_regions(world: MultiWorld, options: SM64Options, player: int):
 
     regTTC = create_region("Tick Tock Clock", player, world)
     create_locs(regTTC, "TTC: Stop Time for Red Coins")
-    ttc_lower = create_subregion(regTTC, "TTC: Lower", "TTC: Roll into the Cage", "TTC: Get a Hand", "TTC: 1Up Block Midway Up")
-    ttc_upper = create_subregion(ttc_lower, "TTC: Upper", "TTC: Timed Jumps on Moving Bars", "TTC: The Pit and the Pendulums")
+    ttc_lower = create_subregion(regTTC, "TTC: Lower", "TTC: Roll into the Cage", "TTC: Get a Hand")
+    ttc_upper = create_subregion(ttc_lower, "TTC: Upper", "TTC: Timed Jumps on Moving Bars", "TTC: The Pit and the Pendulums", "TTC: 1Up Block Midway Up")
     ttc_top = create_subregion(ttc_upper, "TTC: Top", "TTC: Stomp on the Thwomp", "TTC: 1Up Block at the Top")
     regTTC.subregions = [ttc_lower, ttc_upper, ttc_top]
     if options.enable_coin_stars:
