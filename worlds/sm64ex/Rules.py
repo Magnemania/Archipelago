@@ -153,7 +153,7 @@ def set_rules(world, options: SM64Options, player: int, area_connections: dict, 
     rf.assign_rule("SSL: Stand Tall on the Four Pillars", "TJ+WC+GP | CANN+WC+GP | TJ/SF/BF & CAPLESS | MOVELESS")
     rf.assign_rule("SSL: Free Flying for 8 Red Coins", "TJ+WC | CANN+WC | TJ/SF/BF & CAPLESS | MOVELESS & CAPLESS")
     # Dire, Dire Docks
-    rf.assign_rule("DDD: Moving Poles", "CL & {{Bowser in the Fire Sea Key}}")
+    rf.assign_rule("DDD: Moving Poles", "CL & {{Bowser in the Fire Sea Key}} | TJ+DV+LG+WK & MOVELESS")
     rf.assign_rule("DDD: Through the Jet Stream", "MC | CAPLESS")
     rf.assign_rule("DDD: Collect the Caps...", "VC+MC | CAPLESS & VC")
     # Snowman's Land
