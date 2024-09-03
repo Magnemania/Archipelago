@@ -155,10 +155,10 @@ def create_regions(world: MultiWorld, options: SM64Options, player: int):
 
     regSSL = create_region("Shifting Sand Land", player, world)
     create_locs(regSSL, "SSL: In the Talons of the Big Bird", "SSL: Shining Atop the Pyramid",
-                        "SSL: Free Flying for 8 Red Coins", "SSL: Bob-omb Buddy",
+                        "SSL: Free Flying for 8 Red Coins", "SSL: Stand Tall on the Four Pillars", "SSL: Bob-omb Buddy",
                         "SSL: 1Up Block Outside Pyramid", "SSL: 1Up Block Pyramid Left Path", "SSL: 1Up Block Pyramid Back")
     ssl_upper_pyramid = create_subregion(regSSL, "SSL: Upper Pyramid", "SSL: Inside the Ancient Pyramid",
-                                         "SSL: Stand Tall on the Four Pillars", "SSL: Pyramid Puzzle")
+                                         "SSL: Pyramid Puzzle")
     regSSL.subregions = [ssl_upper_pyramid]
     if options.enable_coin_stars:
         create_locs(regSSL, "SSL: 100 Coins")
