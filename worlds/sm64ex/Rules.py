@@ -77,7 +77,7 @@ def set_rules(world, options: SM64Options, player: int, area_connections: dict, 
     connect_regions(world, player, "Menu", randomized_entrances_s["Big Boo's Haunt"], lambda state: state.has("Power Star", player, 12))
     connect_regions(world, player, "Menu", randomized_entrances_s["The Princess's Secret Slide"], lambda state: state.has("Power Star", player, 1))
     connect_regions(world, player, randomized_entrances_s["Jolly Roger Bay"], randomized_entrances_s["The Secret Aquarium"],
-                    rf.build_rule("SF/BF | TJ & LG | MOVELESS & TJ"))
+                    rf.build_rule("SF/BF | DJ & LG | MOVELESS & TJ"))
     connect_regions(world, player, "Menu", randomized_entrances_s["Tower of the Wing Cap"], lambda state: state.has("Power Star", player, 10))
     connect_regions(world, player, "Menu", randomized_entrances_s["Bowser in the Dark World"],
                     lambda state: state.has("Power Star", player, star_costs["FirstBowserDoorCost"]))
@@ -125,7 +125,7 @@ def set_rules(world, options: SM64Options, player: int, area_connections: dict, 
     rf.assign_rule("WF: Fall onto the Caged Island", "CL & {WF: Tower} | MOVELESS & TJ | MOVELESS & LJ | MOVELESS & CANN")
     rf.assign_rule("WF: Blast Away the Wall", "CANN | CANNLESS & LG")
     # Jolly Roger Bay
-    rf.assign_rule("JRB: Upper", "TJ/BF/SF/WK | MOVELESS & LG")
+    rf.assign_rule("JRB: Upper", "DJ/BF/SF/WK | MOVELESS & LG")
     rf.assign_rule("JRB: Red Coins on the Ship Afloat", "CL/CANN/TJ | MOVELESS & BF/WK")
     rf.assign_rule("JRB: Blast to the Stone Pillar", "CANN+CL | CANNLESS & MOVELESS | CANN & MOVELESS")
     rf.assign_rule("JRB: Through the Jet Stream", "MC | CAPLESS")
@@ -138,15 +138,15 @@ def set_rules(world, options: SM64Options, player: int, area_connections: dict, 
     rf.assign_rule("BBH: Seek the 8 Red Coins", "BF/WK/TJ/SF")
     rf.assign_rule("BBH: Eye to Eye in the Secret Room", "VC")
     # Haze Maze Cave
-    rf.assign_rule("HMC: Red Coin Area", "CL & WK/LG/BF/SF/TJ | MOVELESS & WK")
-    rf.assign_rule("HMC: Pit Islands", "TJ+CL | MOVELESS & WK & TJ/LJ | MOVELESS & WK+SF+LG")
+    rf.assign_rule("HMC: Red Coin Area", "CL & WK/LG/BF/SF/DJ | MOVELESS & WK")
+    rf.assign_rule("HMC: Pit Islands", "DJ+CL | MOVELESS & WK & TJ/LJ | MOVELESS & WK+SF+LG")
     rf.assign_rule("HMC: Metal-Head Mario Can Move!", "LJ+MC | CAPLESS & LJ+TJ | CAPLESS & MOVELESS & LJ/TJ/WK")
     rf.assign_rule("HMC: Navigating the Toxic Maze", "WK/SF/BF/TJ")
     rf.assign_rule("HMC: Watch for Rolling Rocks", "WK")
     # Lethal Lava Land
     rf.assign_rule("LLL: Upper Volcano", "CL")
     # Shifting Sand Land
-    rf.assign_rule("SSL: Upper Pyramid", "CL & TJ/BF/SF/LG | MOVELESS")
+    rf.assign_rule("SSL: Upper Pyramid", "CL & DJ/BF/SF/LG | MOVELESS")
     rf.assign_rule("SSL: Stand Tall on the Four Pillars", "TJ+WC+GP | CANN+WC+GP | TJ/SF/BF & CAPLESS | MOVELESS")
     rf.assign_rule("SSL: Free Flying for 8 Red Coins", "TJ+WC | CANN+WC | TJ/SF/BF & CAPLESS | MOVELESS & CAPLESS")
     # Dire, Dire Docks
@@ -245,8 +245,8 @@ class RuleFactory:
     moveless: bool
 
     token_table = {
+        "DJ": "Progressive Jump",
         "TJ": "Triple Jump",
-        "DJ": "Triple Jump",
         "LJ": "Long Jump",
         "BF": "Backflip",
         "SF": "Side Flip",
@@ -272,6 +272,7 @@ class RuleFactory:
         self.capless = not options.strict_cap_requirements
         self.cannonless = not options.strict_cannon_requirements
         self.moveless = not options.strict_move_requirements
+        self.progressive_jump = options.progressive_jump and options.enable_move_rando
 
     def assign_rule(self, target_name: str, rule_expr: str):
         target = self.world.get_location(target_name, self.player) if target_name in location_table else self.world.get_entrance(target_name, self.player)
@@ -329,7 +330,14 @@ class RuleFactory:
                     return False
                 items.add(item)
             if items:
-                return lambda state: state.has_all(items, self.player)
+                if "Progressive Triple Jump" in items:
+                    items.remove("Progressive Triple Jump")
+                    if items:
+                        return lambda state: state.has_all(items, self.player) and state.has("Progressive Jump", self.player, 2)
+                    else:
+                        return lambda state: state.has("Progressive Jump", self.player, 2)
+                else:
+                    return lambda state: state.has_all(items, self.player)
             else:
                 return True
         if '/' in expression:
@@ -343,7 +351,14 @@ class RuleFactory:
                     continue
                 items.add(item)
             if items:
-                return lambda state: state.has_any(items, self.player)
+                if "Progressive Triple Jump" in items:
+                    items.remove("Progressive Triple Jump")
+                    if items:
+                        return lambda state: state.has_any(items, self.player) and state.has("Progressive Jump", self.player, 2)
+                    else:
+                        return lambda state: state.has("Progressive Jump", self.player, 2)
+                else:
+                    return lambda state: state.has_any(items, self.player)
             else:
                 return False
         if '{{' in expression:
@@ -353,6 +368,8 @@ class RuleFactory:
         item = self.parse_token(expression, cannon_name)
         if item in (True, False):
             return item
+        if item == "Progressive Triple Jump":
+            return lambda state: state.has("Progressive Jump", self.player, 2)
         return lambda state: state.has(item, self.player)
 
     def parse_token(self, token: str, cannon_name: str) -> Union[str, bool]:
@@ -370,8 +387,13 @@ class RuleFactory:
         if not item:
             raise Exception(f"Invalid token: '{item}'")
         if item in action_item_table:
-            if self.move_rando_bitvec & (1 << (action_item_table[item] - action_item_table['Double Jump'])) == 0:
+            if self.move_rando_bitvec & (1 << (action_item_table[item] - action_item_table["Progressive Jump"])) == 0:
                 # This action item is not randomized.
                 return True
+            # Triple Jump unlocks Double Jump when not progressive
+            if item == "Progressive Jump" and not self.progressive_jump:
+                return "Triple Jump"
+            elif item == "Triple Jump" and self.progressive_jump:
+                return "Progressive Triple Jump"
         return item
 

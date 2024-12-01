@@ -54,7 +54,12 @@ class SM64World(World):
         if self.options.enable_move_rando:
             for action in self.options.move_rando_actions.value:
                 max_stars -= 1
-                self.move_rando_bitvec |= (1 << (action_item_table[action] - action_item_table['Double Jump']))
+                self.move_rando_bitvec |= (1 << (action_item_table[action] - action_item_table["Progressive Jump"]))
+                if action == "Triple Jump" and self.options.progressive_jump:
+                    self.move_rando_bitvec |= 1
+                    max_stars -= 1
+
+
         if (self.options.exclamation_boxes > 0):
             max_stars += 29
         self.number_of_stars = min(self.options.amount_of_stars, max_stars)
@@ -116,9 +121,12 @@ class SM64World(World):
         if (self.options.buddy_checks):
             self.multiworld.itempool += [self.create_item(name) for name, id in cannon_item_table.items()]
         # Moves
-        self.multiworld.itempool += [self.create_item(action)
-                                     for action, itemid in action_item_table.items()
-                                     if self.move_rando_bitvec & (1 << itemid - action_item_table['Double Jump'])]
+        actions = [action for action, itemid in action_item_table.items()
+                   if self.move_rando_bitvec & (1 << itemid - action_item_table['Progressive Jump'])]
+        if self.move_rando_bitvec & 2 and self.options.progressive_jump:
+            actions.remove("Triple Jump")
+            actions.append("Progressive Jump")
+        self.multiworld.itempool += [self.create_item(action) for action in actions]
 
     def generate_basic(self):
         if not (self.options.buddy_checks):
@@ -181,7 +189,7 @@ class SM64World(World):
             return
         data = {
             "slot_data": self.fill_slot_data(),
-            "location_to_item": {self.location_name_to_id[i.name] : item_table[i.item.name] for i in self.multiworld.get_locations()},
+            "location_to_item": {self.location_name_to_id[i.name] : item_table[i.item.name] for i in self.multiworld.get_locations() if i.address is not None},
             "data_package": {
                 "data": {
                     "games": {

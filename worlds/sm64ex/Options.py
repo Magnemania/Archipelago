@@ -128,6 +128,12 @@ class MoveRandomizerActions(OptionSet):
     valid_keys = [action for action in action_item_table if action != 'Double Jump']
     default = valid_keys
 
+class ProgressiveJump(Toggle):
+    """If Triple Jump is randomized, separate it into two Progressive Jumps.
+    The first unlocks Double Jump, the second unlocks Triple Jump."""
+    display_name = "Progressive Jump"
+
+
 @dataclass
 class SM64Options(PerGameCommonOptions):
     area_rando: AreaRandomizer
@@ -137,6 +143,7 @@ class SM64Options(PerGameCommonOptions):
     enable_coin_stars: EnableCoinStars
     enable_move_rando: EnableMoveRandomizer
     move_rando_actions: MoveRandomizerActions
+    progressive_jump: ProgressiveJump
     strict_cap_requirements: StrictCapRequirements
     strict_cannon_requirements: StrictCannonRequirements
     strict_move_requirements: StrictMoveRequirements
